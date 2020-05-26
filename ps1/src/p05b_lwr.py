@@ -17,24 +17,6 @@ def main(tau, train_path, eval_path):
     x_train, y_train = util.load_dataset(train_path, add_intercept=True)
 
     # *** START CODE HERE ***
-    # Fit a LWR model
-    model = LocallyWeightedLinearRegression(0.5)
-    model.fit(x_train, y_train)
-    # Get MSE value on the validation set
-    x_val, y_val = util.load_dataset(eval_path, add_intercept=True)
-    y_pred = model.predict(x_val)
-    mse = ((y_pred - y_val) ** 2).mean()
-    print(mse)
-    
-    # Plot validation predictions on top of training set
-    # No need to save anything
-    # Plot data
-    
-    import matplotlib.pyplot as plt
-    plt.figure()
-    plt.plot(x_train, y_train, 'bx')
-    plt.plot(x_val, y_pred, 'ro')
-    # plt.show()
     
     # *** END CODE HERE ***
 
@@ -51,8 +33,6 @@ class LocallyWeightedLinearRegression(LinearModel):
 
         """
         # *** START CODE HERE ***
-        self.x = x
-        self.y = y
         # *** END CODE HERE ***
 
     def predict(self, x):
@@ -65,24 +45,4 @@ class LocallyWeightedLinearRegression(LinearModel):
             Outputs of shape (m,).
         """
         # *** START CODE HERE ***
-        from numpy.linalg import inv, norm
-        # gaussian
-        m, n = x.shape
-        g = lambda x: np.exp(- (x ** 2) / (2 * self.tau ** 2))
-        # compute W for each x
-        # x: (m, n)
-        # self.x: (m0, n)
-        # w: (m, m0, m0). compute each theta
-        w = g(norm(self.x[None] - x[:, None], axis=2))
-        # w = np.diag(w)
-        y_pred = np.zeros(m)
-        for i, W in enumerate(w):
-            W = np.diag(W)
-            theta = inv(self.x.T.dot(W).dot(self.x)).dot(self.x.T).dot(W).dot(self.y)
-            # make prediction
-            y_pred[i] = x[i].dot(theta)
-        
-        return y_pred
-        
-        
         # *** END CODE HERE ***
